@@ -17,8 +17,8 @@ import net.minecraft.commands.arguments.NbtTagArgument;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +35,7 @@ public final class Set {
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, tag, value);
         } else
-            source.sendFailure(new TextComponent("set command is disabled in config"));
+            source.sendFailure(Component.literal("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -47,7 +47,7 @@ public final class Set {
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, targetNBT);
         } else
-            source.sendFailure(new TextComponent("set command is disabled in config"));
+            source.sendFailure(Component.literal("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -60,7 +60,7 @@ public final class Set {
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, tag, value);
         } else
-            source.sendFailure(new TextComponent("set command is disabled in config"));
+            source.sendFailure(Component.literal("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -73,7 +73,7 @@ public final class Set {
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, targetNBT);
         } else
-            source.sendFailure(new TextComponent("set command is disabled in config"));
+            source.sendFailure(Component.literal("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -89,13 +89,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in hotbar"));
+                source.sendFailure(Component.literal("no items found in hotbar"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in hotbar"), false);
+            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("set hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("set hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -111,13 +111,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in hotbar"));
+                source.sendFailure(Component.literal("no items found in hotbar"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in hotbar"), false);
+            source.sendSuccess(Component.literal("Set NBT on " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("set hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("set hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -133,13 +133,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in inventory"));
+                source.sendFailure(Component.literal("no items found in inventory"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in inventory"), false);
+            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("set inventory command is disabled in config"));
+            source.sendFailure(Component.literal("set inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -155,13 +155,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in inventory"));
+                source.sendFailure(Component.literal("no items found in inventory"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in inventory"), false);
+            source.sendSuccess(Component.literal("Set NBT on " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("set inventory command is disabled in config"));
+            source.sendFailure(Component.literal("set inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -177,13 +177,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in ender chest"));
+                source.sendFailure(Component.literal("no items found in ender chest"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in ender chest"), false);
+            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("set ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("set ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -199,13 +199,13 @@ public final class Set {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in ender chest"));
+                source.sendFailure(Component.literal("no items found in ender chest"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in ender chest"), false);
+            source.sendSuccess(Component.literal("Set NBT on " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("set ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("set ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -213,14 +213,14 @@ public final class Set {
         CompoundTag targetNBT = item.getOrCreateTag();
         targetNBT.put(tag, value);
         item.setTag(targetNBT);
-        MutableComponent text = new TextComponent("current NBT: ")
+        MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
         source.sendSuccess(text, false);
     }
     
     private static void setTagAndNotify(CommandSourceStack source, ItemStack item, CompoundTag targetNBT) {
         item.setTag(targetNBT);
-        MutableComponent text = new TextComponent("current NBT: ")
+        MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
         source.sendSuccess(text, false);
     }

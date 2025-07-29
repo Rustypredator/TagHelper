@@ -13,8 +13,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public final class Get {
             if (item == null) return Command.SINGLE_SUCCESS;
             displayNBT(source, item);
         } else
-            source.sendFailure(new TextComponent("get command is disabled in config"));
+            source.sendFailure(Component.literal("get command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -43,7 +43,7 @@ public final class Get {
             if (item == null) return Command.SINGLE_SUCCESS;
             displayNBT(source, item);
         } else
-            source.sendFailure(new TextComponent("get command is disabled in config"));
+            source.sendFailure(Component.literal("get command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -54,18 +54,18 @@ public final class Get {
             int count = CommandUtil.processHotbarItems(source, item -> processedItems.add(item));
             
             if (count == 0) {
-                source.sendFailure(new TextComponent("no items found in hotbar"));
+                source.sendFailure(Component.literal("no items found in hotbar"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Processing " + count + " items in hotbar:"), false);
+            source.sendSuccess(Component.literal("Processing " + count + " items in hotbar:"), false);
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
-                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("get hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -76,18 +76,18 @@ public final class Get {
             int count = CommandUtil.processInventoryItems(source, item -> processedItems.add(item));
             
             if (count == 0) {
-                source.sendFailure(new TextComponent("no items found in inventory"));
+                source.sendFailure(Component.literal("no items found in inventory"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Processing " + count + " items in inventory:"), false);
+            source.sendSuccess(Component.literal("Processing " + count + " items in inventory:"), false);
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
-                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get inventory command is disabled in config"));
+            source.sendFailure(Component.literal("get inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -98,24 +98,24 @@ public final class Get {
             int count = CommandUtil.processEnderChestItems(source, item -> processedItems.add(item));
             
             if (count == 0) {
-                source.sendFailure(new TextComponent("no items found in ender chest"));
+                source.sendFailure(Component.literal("no items found in ender chest"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Processing " + count + " items in ender chest:"), false);
+            source.sendSuccess(Component.literal("Processing " + count + " items in ender chest:"), false);
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
-                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("get ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static void displayNBT(CommandSourceStack source, ItemStack item) {
         CompoundTag targetNBT = item.getTag();
-        MutableComponent text = new TextComponent("NBT: ");
+        MutableComponent text = Component.literal("NBT: ");
         if (targetNBT == null)
             text.append("null");
         else

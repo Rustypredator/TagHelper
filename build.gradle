@@ -17,7 +17,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 def baseVersion = '1.0.0'
-def minecraftVersion = '1.18.2'
+def minecraftVersion = '1.19.4'
 version = "${minecraftVersion}-${baseVersion}" as Object
 group = 'io.github.samarium150'
 archivesBaseName = 'taghelper'
@@ -50,7 +50,7 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
-                structurescompass {
+                taghelper {
                     source mainSourceSet
                 }
             }
@@ -60,7 +60,7 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
-                structurescompass {
+                taghelper {
                     source mainSourceSet
                 }
             }
@@ -72,7 +72,7 @@ minecraft {
 // sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.19'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.1.0'
 }
 
 tasks.withType(JavaCompile) {

@@ -14,8 +14,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,7 +32,7 @@ public final class Remove {
             if (item == null) return Command.SINGLE_SUCCESS;
             removeTagAndNotify(source, item, tag);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(Component.literal("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -43,7 +43,7 @@ public final class Remove {
             if (item == null) return Command.SINGLE_SUCCESS;
             removeAllTagsAndNotify(source, item);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(Component.literal("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -56,7 +56,7 @@ public final class Remove {
             if (item == null) return Command.SINGLE_SUCCESS;
             removeTagAndNotify(source, item, tag);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(Component.literal("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -68,7 +68,7 @@ public final class Remove {
             if (item == null) return Command.SINGLE_SUCCESS;
             removeAllTagsAndNotify(source, item);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(Component.literal("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -85,13 +85,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in hotbar"));
+                source.sendFailure(Component.literal("no items found in hotbar"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in hotbar"), false);
+            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("remove hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -106,13 +106,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in hotbar"));
+                source.sendFailure(Component.literal("no items found in hotbar"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in hotbar"), false);
+            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("remove hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -129,13 +129,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in inventory"));
+                source.sendFailure(Component.literal("no items found in inventory"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in inventory"), false);
+            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+            source.sendFailure(Component.literal("remove inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -150,13 +150,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in inventory"));
+                source.sendFailure(Component.literal("no items found in inventory"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in inventory"), false);
+            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+            source.sendFailure(Component.literal("remove inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -173,13 +173,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in ender chest"));
+                source.sendFailure(Component.literal("no items found in ender chest"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in ender chest"), false);
+            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("remove ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -194,13 +194,13 @@ public final class Remove {
             });
             
             if (processed == 0) {
-                source.sendFailure(new TextComponent("no items found in ender chest"));
+                source.sendFailure(Component.literal("no items found in ender chest"));
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in ender chest"), false);
+            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("remove ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
@@ -209,14 +209,14 @@ public final class Remove {
         if (targetNBT == null) return;
         targetNBT.remove(tag);
         item.setTag(targetNBT);
-        MutableComponent text = new TextComponent("current NBT: ")
+        MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
         source.sendSuccess(text, false);
     }
     
     private static void removeAllTagsAndNotify(CommandSourceStack source, ItemStack item) {
         item.setTag(null);
-        source.sendSuccess(new TextComponent("NBT is removed"), false);
+        source.sendSuccess(Component.literal("NBT is removed"), false);
     }
     
     /**

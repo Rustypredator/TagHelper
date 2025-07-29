@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.Container;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +38,7 @@ public final class CommandUtil {
         ServerPlayer player = source.getPlayerOrException();
         ItemStack item = player.getMainHandItem();
         if (item.isEmpty()) {
-            source.sendFailure(new TextComponent("no item in the main hand"));
+            source.sendFailure(Component.literal("no item in the main hand"));
             return null;
         }
         return item;
@@ -51,7 +51,7 @@ public final class CommandUtil {
         
         // Check if slot is valid
         if (slotId < 0 || slotId >= 41) {
-            source.sendFailure(new TextComponent("invalid slot ID (must be between 0 and 40)"));
+            source.sendFailure(Component.literal("invalid slot ID (must be between 0 and 40)"));
             return null;
         }
         
@@ -76,7 +76,7 @@ public final class CommandUtil {
                     break;
                 default:
                     // Should never reach here
-                    source.sendFailure(new TextComponent("invalid slot ID"));
+                    source.sendFailure(Component.literal("invalid slot ID"));
                     return null;
             }
         } else {
@@ -85,7 +85,7 @@ public final class CommandUtil {
         }
         
         if (item.isEmpty()) {
-            source.sendFailure(new TextComponent("no item in slot " + slotId));
+            source.sendFailure(Component.literal("no item in slot " + slotId));
             return null;
         }
         return item;
