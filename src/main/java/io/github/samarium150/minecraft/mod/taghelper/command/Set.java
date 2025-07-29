@@ -21,6 +21,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Set {
     
@@ -76,6 +77,138 @@ public final class Set {
         return Command.SINGLE_SUCCESS;
     }
     
+    private static int executesHotbarWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processHotbarItems(source, item -> {
+                setTagSilently(item, tag, value);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in hotbar"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in hotbar"), false);
+        } else
+            source.sendFailure(new TextComponent("set hotbar command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesHotbarWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processHotbarItems(source, item -> {
+                setTagSilently(item, targetNBT);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in hotbar"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in hotbar"), false);
+        } else
+            source.sendFailure(new TextComponent("set hotbar command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesInventoryWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processInventoryItems(source, item -> {
+                setTagSilently(item, tag, value);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in inventory"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in inventory"), false);
+        } else
+            source.sendFailure(new TextComponent("set inventory command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesInventoryWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processInventoryItems(source, item -> {
+                setTagSilently(item, targetNBT);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in inventory"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in inventory"), false);
+        } else
+            source.sendFailure(new TextComponent("set inventory command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesEChestWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processEnderChestItems(source, item -> {
+                setTagSilently(item, tag, value);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in ender chest"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set tag '" + tag + "' on " + count + " items in ender chest"), false);
+        } else
+            source.sendFailure(new TextComponent("set ender chest command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesEChestWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processEnderChestItems(source, item -> {
+                setTagSilently(item, targetNBT);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in ender chest"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Set NBT on " + count + " items in ender chest"), false);
+        } else
+            source.sendFailure(new TextComponent("set ender chest command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
     private static void setTagAndNotify(CommandSourceStack source, ItemStack item, String tag, Tag value) {
         CompoundTag targetNBT = item.getOrCreateTag();
         targetNBT.put(tag, value);
@@ -92,8 +225,19 @@ public final class Set {
         source.sendSuccess(text, false);
     }
     
+    private static void setTagSilently(ItemStack item, String tag, Tag value) {
+        CompoundTag targetNBT = item.getOrCreateTag();
+        targetNBT.put(tag, value);
+        item.setTag(targetNBT);
+    }
+    
+    private static void setTagSilently(ItemStack item, CompoundTag targetNBT) {
+        item.setTag(targetNBT.copy()); // Copy to avoid reference issues
+    }
+    
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> literal = CommandUtil.literal
+            // Holding subcommand
             .then(Commands.literal("holding")
                 .then(Commands.literal("set")
                     .then(Commands.argument("key", StringArgumentType.string())
@@ -111,6 +255,7 @@ public final class Set {
                     )
                 )
             )
+            // Slot subcommand
             .then(Commands.literal("slot")
                 .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
                     .then(Commands.literal("set")
@@ -126,6 +271,60 @@ public final class Set {
                             .executes(context -> executesSlotWithCompound(context,
                                 CompoundTagArgument.getCompoundTag(context, "NBT"))
                             )
+                        )
+                    )
+                )
+            )
+            // Hotbar subcommand
+            .then(Commands.literal("hotbar")
+                .then(Commands.literal("set")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .then(Commands.argument("value", NbtTagArgument.nbtTag())
+                            .executes(context -> executesHotbarWithTag(context,
+                                StringArgumentType.getString(context, "key"),
+                                NbtTagArgument.getNbtTag(context, "value"))
+                            )
+                        )
+                    )
+                    .then(Commands.argument("NBT", CompoundTagArgument.compoundTag())
+                        .executes(context -> executesHotbarWithCompound(context,
+                            CompoundTagArgument.getCompoundTag(context, "NBT"))
+                        )
+                    )
+                )
+            )
+            // Inventory subcommand
+            .then(Commands.literal("inventory")
+                .then(Commands.literal("set")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .then(Commands.argument("value", NbtTagArgument.nbtTag())
+                            .executes(context -> executesInventoryWithTag(context,
+                                StringArgumentType.getString(context, "key"),
+                                NbtTagArgument.getNbtTag(context, "value"))
+                            )
+                        )
+                    )
+                    .then(Commands.argument("NBT", CompoundTagArgument.compoundTag())
+                        .executes(context -> executesInventoryWithCompound(context,
+                            CompoundTagArgument.getCompoundTag(context, "NBT"))
+                        )
+                    )
+                )
+            )
+            // Ender Chest subcommand
+            .then(Commands.literal("echest")
+                .then(Commands.literal("set")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .then(Commands.argument("value", NbtTagArgument.nbtTag())
+                            .executes(context -> executesEChestWithTag(context,
+                                StringArgumentType.getString(context, "key"),
+                                NbtTagArgument.getNbtTag(context, "value"))
+                            )
+                        )
+                    )
+                    .then(Commands.argument("NBT", CompoundTagArgument.compoundTag())
+                        .executes(context -> executesEChestWithCompound(context,
+                            CompoundTagArgument.getCompoundTag(context, "NBT"))
                         )
                     )
                 )

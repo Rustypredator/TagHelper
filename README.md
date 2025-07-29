@@ -24,10 +24,13 @@ A Minecraft mod for editing **Named Binary Tags** (NBT) by commands.
 
 ## Todo:
 - [ ] Update to modern MC Variants
-- [ ] Add More Capabilities
-  - [ ] Item/Slot Selection
+  - [ ] 1.19.x
+  - [ ] 1.20.x
+  - [ ] 1.21.x
+- [x] Add More Capabilities
+  - [x] Item/Slot Selection
     - [x] `Holding`
     - [x] `Slot <slotnumber>`
-    - [ ] `Hotbar`
-    - [ ] `Inv`
-    - [ ] `Echest`
+    - [x] `Hotbar`
+    - [x] `Inv`
+    - [x] `Echest`

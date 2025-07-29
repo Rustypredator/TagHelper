@@ -17,6 +17,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Get {
     
@@ -45,6 +47,72 @@ public final class Get {
         return Command.SINGLE_SUCCESS;
     }
     
+    private static int executesHotbar(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+            List<ItemStack> processedItems = new ArrayList<>();
+            int count = CommandUtil.processHotbarItems(source, item -> processedItems.add(item));
+            
+            if (count == 0) {
+                source.sendFailure(new TextComponent("no items found in hotbar"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Processing " + count + " items in hotbar:"), false);
+            for (int i = 0; i < processedItems.size(); i++) {
+                ItemStack item = processedItems.get(i);
+                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                displayNBT(source, item, text);
+            }
+        } else
+            source.sendFailure(new TextComponent("get hotbar command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesInventory(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+            List<ItemStack> processedItems = new ArrayList<>();
+            int count = CommandUtil.processInventoryItems(source, item -> processedItems.add(item));
+            
+            if (count == 0) {
+                source.sendFailure(new TextComponent("no items found in inventory"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Processing " + count + " items in inventory:"), false);
+            for (int i = 0; i < processedItems.size(); i++) {
+                ItemStack item = processedItems.get(i);
+                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                displayNBT(source, item, text);
+            }
+        } else
+            source.sendFailure(new TextComponent("get inventory command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesEChest(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+            List<ItemStack> processedItems = new ArrayList<>();
+            int count = CommandUtil.processEnderChestItems(source, item -> processedItems.add(item));
+            
+            if (count == 0) {
+                source.sendFailure(new TextComponent("no items found in ender chest"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Processing " + count + " items in ender chest:"), false);
+            for (int i = 0; i < processedItems.size(); i++) {
+                ItemStack item = processedItems.get(i);
+                MutableComponent text = new TextComponent("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
+                displayNBT(source, item, text);
+            }
+        } else
+            source.sendFailure(new TextComponent("get ender chest command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
     private static void displayNBT(CommandSourceStack source, ItemStack item) {
         CompoundTag targetNBT = item.getTag();
         MutableComponent text = new TextComponent("NBT: ");
@@ -55,6 +123,15 @@ public final class Get {
         source.sendSuccess(text, false);
     }
     
+    private static void displayNBT(CommandSourceStack source, ItemStack item, MutableComponent prefix) {
+        CompoundTag targetNBT = item.getTag();
+        if (targetNBT == null)
+            prefix.append("null");
+        else
+            prefix.append(targetNBT.toString());
+        source.sendSuccess(prefix, false);
+    }
+    
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> literal = CommandUtil.literal
             .then(Commands.literal("holding")
@@ -63,7 +140,16 @@ public final class Get {
             .then(Commands.literal("slot")
                 .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
                     .then(Commands.literal("get")
-                        .executes(Get::executesSlot))));
+                        .executes(Get::executesSlot))))
+            .then(Commands.literal("hotbar")
+                .then(Commands.literal("get")
+                    .executes(Get::executesHotbar)))
+            .then(Commands.literal("inventory")
+                .then(Commands.literal("get")
+                    .executes(Get::executesInventory)))
+            .then(Commands.literal("echest")
+                .then(Commands.literal("get")
+                    .executes(Get::executesEChest)));
                                         
         LiteralCommandNode<CommandSourceStack> cmd = dispatcher.register(literal);
         dispatcher.register(CommandUtil.alias.redirect(cmd));

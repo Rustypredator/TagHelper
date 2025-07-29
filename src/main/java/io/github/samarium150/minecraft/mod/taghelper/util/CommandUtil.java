@@ -8,10 +8,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.Container;
 import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class CommandUtil {
     
@@ -20,6 +26,12 @@ public final class CommandUtil {
     public static final LiteralArgumentBuilder<CommandSourceStack> literal = Commands.literal(GeneralUtil.MOD_ID)
             .requires(commandSource -> commandSource.hasPermission(2));
     public static final LiteralArgumentBuilder<CommandSourceStack> alias = Commands.literal("th");
+    
+    // Slot ranges
+    public static final int HOTBAR_START = 0;
+    public static final int HOTBAR_END = 8;
+    public static final int INVENTORY_START = 9;
+    public static final int INVENTORY_END = 35;
     
     @Nullable
     public static ItemStack getMainHandItem(@Nonnull CommandSourceStack source) throws CommandSyntaxException {
@@ -77,5 +89,71 @@ public final class CommandUtil {
             return null;
         }
         return item;
+    }
+    
+    /**
+     * Process all non-empty items in the hotbar (slots 0-8)
+     * @param source The command source
+     * @param itemConsumer Consumer function to apply to each non-empty item
+     * @return Number of items processed
+     */
+    public static int processHotbarItems(@Nonnull CommandSourceStack source, @Nonnull Consumer<ItemStack> itemConsumer) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        Inventory inventory = player.getInventory();
+        int count = 0;
+        
+        for (int slot = HOTBAR_START; slot <= HOTBAR_END; slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (!item.isEmpty()) {
+                itemConsumer.accept(item);
+                count++;
+            }
+        }
+        
+        return count;
+    }
+    
+    /**
+     * Process all non-empty items in the main inventory (slots 9-35, excluding hotbar)
+     * @param source The command source
+     * @param itemConsumer Consumer function to apply to each non-empty item
+     * @return Number of items processed
+     */
+    public static int processInventoryItems(@Nonnull CommandSourceStack source, @Nonnull Consumer<ItemStack> itemConsumer) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        Inventory inventory = player.getInventory();
+        int count = 0;
+        
+        for (int slot = INVENTORY_START; slot <= INVENTORY_END; slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (!item.isEmpty()) {
+                itemConsumer.accept(item);
+                count++;
+            }
+        }
+        
+        return count;
+    }
+    
+    /**
+     * Process all non-empty items in the player's ender chest
+     * @param source The command source
+     * @param itemConsumer Consumer function to apply to each non-empty item
+     * @return Number of items processed
+     */
+    public static int processEnderChestItems(@Nonnull CommandSourceStack source, @Nonnull Consumer<ItemStack> itemConsumer) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        Container enderChest = player.getEnderChestInventory();
+        int count = 0;
+        
+        for (int slot = 0; slot < enderChest.getContainerSize(); slot++) {
+            ItemStack item = enderChest.getItem(slot);
+            if (!item.isEmpty()) {
+                itemConsumer.accept(item);
+                count++;
+            }
+        }
+        
+        return count;
     }
 }

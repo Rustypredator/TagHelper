@@ -18,6 +18,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Remove {
     
@@ -71,6 +72,138 @@ public final class Remove {
         return Command.SINGLE_SUCCESS;
     }
     
+    private static int executesHotbarWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processHotbarItems(source, item -> {
+                if (removeTagSilently(item, tag)) {
+                    count.incrementAndGet();
+                }
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in hotbar"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in hotbar"), false);
+        } else
+            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesHotbar(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processHotbarItems(source, item -> {
+                removeAllTagsSilently(item);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in hotbar"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in hotbar"), false);
+        } else
+            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesInventoryWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processInventoryItems(source, item -> {
+                if (removeTagSilently(item, tag)) {
+                    count.incrementAndGet();
+                }
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in inventory"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in inventory"), false);
+        } else
+            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesInventory(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processInventoryItems(source, item -> {
+                removeAllTagsSilently(item);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in inventory"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in inventory"), false);
+        } else
+            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesEChestWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processEnderChestItems(source, item -> {
+                if (removeTagSilently(item, tag)) {
+                    count.incrementAndGet();
+                }
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in ender chest"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in ender chest"), false);
+        } else
+            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesEChest(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+            AtomicInteger count = new AtomicInteger(0);
+            
+            int processed = CommandUtil.processEnderChestItems(source, item -> {
+                removeAllTagsSilently(item);
+                count.incrementAndGet();
+            });
+            
+            if (processed == 0) {
+                source.sendFailure(new TextComponent("no items found in ender chest"));
+                return Command.SINGLE_SUCCESS;
+            }
+            
+            source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in ender chest"), false);
+        } else
+            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
     private static void removeTagAndNotify(CommandSourceStack source, ItemStack item, String tag) {
         CompoundTag targetNBT = item.getTag();
         if (targetNBT == null) return;
@@ -86,28 +219,80 @@ public final class Remove {
         source.sendSuccess(new TextComponent("NBT is removed"), false);
     }
     
+    /**
+     * Removes a tag from an item silently (without notification)
+     * @param item The item to remove the tag from
+     * @param tag The tag to remove
+     * @return true if the tag was removed, false if it didn't exist
+     */
+    private static boolean removeTagSilently(ItemStack item, String tag) {
+        CompoundTag targetNBT = item.getTag();
+        if (targetNBT == null) return false;
+        if (!targetNBT.contains(tag)) return false;
+        
+        targetNBT.remove(tag);
+        item.setTag(targetNBT);
+        return true;
+    }
+    
+    private static void removeAllTagsSilently(ItemStack item) {
+        item.setTag(null);
+    }
+    
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> literal = CommandUtil.literal
-                .then(Commands.literal("holding")
+            // Holding subcommand
+            .then(Commands.literal("holding")
+                .then(Commands.literal("remove")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .executes(context -> executesHoldingWithTag(context,
+                            StringArgumentType.getString(context, "key")))
+                    )
+                    .executes(Remove::executesHolding)
+                )
+            )
+            // Slot subcommand
+            .then(Commands.literal("slot")
+                .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
                     .then(Commands.literal("remove")
                         .then(Commands.argument("key", StringArgumentType.string())
-                            .executes(context -> executesHoldingWithTag(context,
+                            .executes(context -> executesSlotWithTag(context,
                                 StringArgumentType.getString(context, "key")))
                         )
-                        .executes(Remove::executesHolding)
+                        .executes(Remove::executesSlot)
                     )
                 )
-                .then(Commands.literal("slot")
-                    .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
-                        .then(Commands.literal("remove")
-                            .then(Commands.argument("key", StringArgumentType.string())
-                                .executes(context -> executesSlotWithTag(context,
-                                    StringArgumentType.getString(context, "key")))
-                            )
-                            .executes(Remove::executesSlot)
-                        )
+            )
+            // Hotbar subcommand
+            .then(Commands.literal("hotbar")
+                .then(Commands.literal("remove")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .executes(context -> executesHotbarWithTag(context,
+                            StringArgumentType.getString(context, "key")))
                     )
-                );
+                    .executes(Remove::executesHotbar)
+                )
+            )
+            // Inventory subcommand
+            .then(Commands.literal("inventory")
+                .then(Commands.literal("remove")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .executes(context -> executesInventoryWithTag(context,
+                            StringArgumentType.getString(context, "key")))
+                    )
+                    .executes(Remove::executesInventory)
+                )
+            )
+            // Ender Chest subcommand
+            .then(Commands.literal("echest")
+                .then(Commands.literal("remove")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .executes(context -> executesEChestWithTag(context,
+                            StringArgumentType.getString(context, "key")))
+                    )
+                    .executes(Remove::executesEChest)
+                )
+            );
         LiteralCommandNode<CommandSourceStack> cmd = dispatcher.register(literal);
         dispatcher.register(CommandUtil.alias.redirect(cmd));
     }
