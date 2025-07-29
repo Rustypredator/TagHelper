@@ -93,7 +93,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in hotbar"), false);
+            source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in hotbar"));
         } else
             source.sendFailure(Component.literal("set hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -115,7 +115,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set NBT on " + count + " items in hotbar"), false);
+            source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in hotbar"));
         } else
             source.sendFailure(Component.literal("set hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -137,7 +137,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in inventory"), false);
+            source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in inventory"));
         } else
             source.sendFailure(Component.literal("set inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -159,7 +159,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set NBT on " + count + " items in inventory"), false);
+            source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in inventory"));
         } else
             source.sendFailure(Component.literal("set inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -181,7 +181,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set tag '" + tag + "' on " + count + " items in ender chest"), false);
+            source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in ender chest"));
         } else
             source.sendFailure(Component.literal("set ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -203,7 +203,7 @@ public final class Set {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Set NBT on " + count + " items in ender chest"), false);
+            source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in ender chest"));
         } else
             source.sendFailure(Component.literal("set ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -215,14 +215,14 @@ public final class Set {
         item.setTag(targetNBT);
         MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
-        source.sendSuccess(text, false);
+        source.sendSystemMessage(text);
     }
     
     private static void setTagAndNotify(CommandSourceStack source, ItemStack item, CompoundTag targetNBT) {
         item.setTag(targetNBT);
         MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
-        source.sendSuccess(text, false);
+        source.sendSystemMessage(text);
     }
     
     private static void setTagSilently(ItemStack item, String tag, Tag value) {

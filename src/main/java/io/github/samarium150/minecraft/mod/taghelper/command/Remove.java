@@ -89,7 +89,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in hotbar"), false);
+            source.sendSystemMessage(Component.literal("Removed tag '" + tag + "' from " + count + " items in hotbar"));
         } else
             source.sendFailure(Component.literal("remove hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -110,7 +110,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in hotbar"), false);
+            source.sendSystemMessage(Component.literal("Removed all NBT from " + count + " items in hotbar"));
         } else
             source.sendFailure(Component.literal("remove hotbar command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -133,7 +133,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in inventory"), false);
+            source.sendSystemMessage(Component.literal("Removed tag '" + tag + "' from " + count + " items in inventory"));
         } else
             source.sendFailure(Component.literal("remove inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -154,7 +154,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in inventory"), false);
+            source.sendSystemMessage(Component.literal("Removed all NBT from " + count + " items in inventory"));
         } else
             source.sendFailure(Component.literal("remove inventory command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -177,7 +177,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed tag '" + tag + "' from " + count + " items in ender chest"), false);
+            source.sendSystemMessage(Component.literal("Removed tag '" + tag + "' from " + count + " items in ender chest"));
         } else
             source.sendFailure(Component.literal("remove ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -198,7 +198,7 @@ public final class Remove {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Removed all NBT from " + count + " items in ender chest"), false);
+            source.sendSystemMessage(Component.literal("Removed all NBT from " + count + " items in ender chest"));
         } else
             source.sendFailure(Component.literal("remove ender chest command is disabled in config"));
         return Command.SINGLE_SUCCESS;
@@ -211,12 +211,12 @@ public final class Remove {
         item.setTag(targetNBT);
         MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
-        source.sendSuccess(text, false);
+        source.sendSystemMessage(text);
     }
     
     private static void removeAllTagsAndNotify(CommandSourceStack source, ItemStack item) {
         item.setTag(null);
-        source.sendSuccess(Component.literal("NBT is removed"), false);
+        source.sendSystemMessage(Component.literal("NBT is removed"));
     }
     
     /**

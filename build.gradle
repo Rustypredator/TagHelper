@@ -16,8 +16,9 @@ plugins {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-def baseVersion = '1.0.0'
-def minecraftVersion = '1.19.4'
+def baseVersion = '1.0.1'
+def minecraftVersion = '1.20.1'
+def forgeVersion = '47.4.0'
 version = "${minecraftVersion}-${baseVersion}" as Object
 group = 'io.github.samarium150'
 archivesBaseName = 'taghelper'
@@ -72,7 +73,7 @@ minecraft {
 // sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.1.0'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
 }
 
 tasks.withType(JavaCompile) {

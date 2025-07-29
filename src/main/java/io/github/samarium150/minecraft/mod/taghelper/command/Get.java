@@ -58,7 +58,7 @@ public final class Get {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Processing " + count + " items in hotbar:"), false);
+            source.sendSystemMessage(Component.literal("Processing " + count + " items in hotbar:"));
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
                 MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
@@ -80,7 +80,7 @@ public final class Get {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Processing " + count + " items in inventory:"), false);
+            source.sendSystemMessage(Component.literal("Processing " + count + " items in inventory:"));
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
                 MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
@@ -102,7 +102,7 @@ public final class Get {
                 return Command.SINGLE_SUCCESS;
             }
             
-            source.sendSuccess(Component.literal("Processing " + count + " items in ender chest:"), false);
+            source.sendSystemMessage(Component.literal("Processing " + count + " items in ender chest:"));
             for (int i = 0; i < processedItems.size(); i++) {
                 ItemStack item = processedItems.get(i);
                 MutableComponent text = Component.literal("Item " + (i + 1) + ": " + item.getDisplayName().getString() + " - ");
@@ -120,7 +120,7 @@ public final class Get {
             text.append("null");
         else
             text.append(targetNBT.toString());
-        source.sendSuccess(text, false);
+        source.sendSystemMessage(text);
     }
     
     private static void displayNBT(CommandSourceStack source, ItemStack item, MutableComponent prefix) {
@@ -129,7 +129,7 @@ public final class Get {
             prefix.append("null");
         else
             prefix.append(targetNBT.toString());
-        source.sendSuccess(prefix, false);
+        source.sendSystemMessage(prefix);
     }
     
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
