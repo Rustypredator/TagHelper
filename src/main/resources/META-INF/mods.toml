@@ -1,16 +1,16 @@
 modLoader="javafml"
 loaderVersion="[40,)"
-issueTrackerURL="https://github.com/Samarium150/TagHelper/issues"
+issueTrackerURL="https://github.com/Rustypredator/TagHelper/issues"
 license="GNU GENERAL PUBLIC LICENSE Version 3"
 
 [[mods]]
-    modId="taghelper"
+    modId="taghelperplus"
     version="${file.jarVersion}"
-    displayName="Tag Helper"
-    updateJSONURL="https://raw.githubusercontent.com/Samarium150/TagHelper/main/docs/update.json"
+    displayName="Tag Helper Plus"
+    updateJSONURL="https://raw.githubusercontent.com/Rustypredator/TagHelper/main/docs/update.json"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/taghelper"
     logoFile="logo.png"
-    authors="Samarium"
+    authors="Samarium, Rustypredator"
     description='''
     Mod for editing NBT by commands
     '''
