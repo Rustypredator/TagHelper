@@ -20,3 +20,14 @@ A Minecraft mod for editing **Named Binary Tags** (NBT) by commands.
   Remove NBT of the item on the main hand.
 
 `/th` is an alias of `/taghelper`
+
+
+## Todo:
+- [ ] Update to modern MC Variants
+- [ ] Add More Capabilities
+  - [ ] Item/Slot Selection
+    - [ ] `Holding`
+    - [ ] `Slot <slotnumber>`
+    - [ ] `Hotbar`
+    - [ ] `Inv`
+    - [ ] `Echest`
