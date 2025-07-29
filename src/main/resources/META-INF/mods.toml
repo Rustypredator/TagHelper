@@ -4,7 +4,7 @@ issueTrackerURL="https://github.com/Rustypredator/TagHelper/issues"
 license="GNU GENERAL PUBLIC LICENSE Version 3"
 
 [[mods]]
-    modId="taghelperplus"
+    modId="taghelper"
     version="${file.jarVersion}"
     displayName="Tag Helper Plus"
     updateJSONURL="https://raw.githubusercontent.com/Rustypredator/TagHelper/main/docs/update.json"
