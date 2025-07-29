@@ -2,6 +2,7 @@ package io.github.samarium150.minecraft.mod.taghelper.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -22,44 +23,90 @@ public final class Remove {
     
     private Remove() { }
     
-    private static int executes(@Nonnull CommandContext<CommandSourceStack> context, String tag)
+    private static int executesHoldingWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (TagHelperConfig.enableRemoveCommand.get()) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
-            CompoundTag targetNBT = item.getTag();
-            if (targetNBT == null) return Command.SINGLE_SUCCESS;
-            targetNBT.remove(tag);
-            item.setTag(targetNBT);
-            MutableComponent text = new TextComponent("current NBT: ")
-                    .append(targetNBT.toString());
-            source.sendSuccess(text, false);
+            removeTagAndNotify(source, item, tag);
         } else
             source.sendFailure(new TextComponent("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
-    private static int executes(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executesHolding(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (TagHelperConfig.enableRemoveCommand.get()) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
-            item.setTag(null);
-            source.sendSuccess(new TextComponent("NBT is removed"), false);
+            removeAllTagsAndNotify(source, item);
         } else
             source.sendFailure(new TextComponent("remove command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
+    private static int executesSlotWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get()) {
+            int slotId = IntegerArgumentType.getInteger(context, "slot");
+            ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
+            if (item == null) return Command.SINGLE_SUCCESS;
+            removeTagAndNotify(source, item, tag);
+        } else
+            source.sendFailure(new TextComponent("remove command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesSlot(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableRemoveCommand.get()) {
+            int slotId = IntegerArgumentType.getInteger(context, "slot");
+            ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
+            if (item == null) return Command.SINGLE_SUCCESS;
+            removeAllTagsAndNotify(source, item);
+        } else
+            source.sendFailure(new TextComponent("remove command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static void removeTagAndNotify(CommandSourceStack source, ItemStack item, String tag) {
+        CompoundTag targetNBT = item.getTag();
+        if (targetNBT == null) return;
+        targetNBT.remove(tag);
+        item.setTag(targetNBT);
+        MutableComponent text = new TextComponent("current NBT: ")
+            .append(targetNBT.toString());
+        source.sendSuccess(text, false);
+    }
+    
+    private static void removeAllTagsAndNotify(CommandSourceStack source, ItemStack item) {
+        item.setTag(null);
+        source.sendSuccess(new TextComponent("NBT is removed"), false);
+    }
+    
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> literal = CommandUtil.literal
-                .then(Commands.literal("remove")
+                .then(Commands.literal("holding")
+                    .then(Commands.literal("remove")
                         .then(Commands.argument("key", StringArgumentType.string())
-                                .executes(context -> executes(context,
-                                        StringArgumentType.getString(context, "key")))
+                            .executes(context -> executesHoldingWithTag(context,
+                                StringArgumentType.getString(context, "key")))
                         )
-                        .executes(Remove::executes)
+                        .executes(Remove::executesHolding)
+                    )
+                )
+                .then(Commands.literal("slot")
+                    .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
+                        .then(Commands.literal("remove")
+                            .then(Commands.argument("key", StringArgumentType.string())
+                                .executes(context -> executesSlotWithTag(context,
+                                    StringArgumentType.getString(context, "key")))
+                            )
+                            .executes(Remove::executesSlot)
+                        )
+                    )
                 );
         LiteralCommandNode<CommandSourceStack> cmd = dispatcher.register(literal);
         dispatcher.register(CommandUtil.alias.redirect(cmd));

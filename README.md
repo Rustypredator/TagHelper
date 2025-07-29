@@ -26,8 +26,8 @@ A Minecraft mod for editing **Named Binary Tags** (NBT) by commands.
 - [ ] Update to modern MC Variants
 - [ ] Add More Capabilities
   - [ ] Item/Slot Selection
-    - [ ] `Holding`
-    - [ ] `Slot <slotnumber>`
+    - [x] `Holding`
+    - [x] `Slot <slotnumber>`
     - [ ] `Hotbar`
     - [ ] `Inv`
     - [ ] `Echest`

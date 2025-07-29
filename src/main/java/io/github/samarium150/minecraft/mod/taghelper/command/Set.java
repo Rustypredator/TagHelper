@@ -2,6 +2,7 @@ package io.github.samarium150.minecraft.mod.taghelper.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -25,55 +26,110 @@ public final class Set {
     
     private Set() { }
     
-    private static int executes(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
+    private static int executesHoldingWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (TagHelperConfig.enableSetCommand.get()) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
-            CompoundTag targetNBT = item.getOrCreateTag();
-            targetNBT.put(tag, value);
-            item.setTag(targetNBT);
-            MutableComponent text = new TextComponent("current NBT: ")
-                    .append(targetNBT.toString());
-            source.sendSuccess(text, false);
+            setTagAndNotify(source, item, tag, value);
         } else
             source.sendFailure(new TextComponent("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
     }
     
-    private static int executes(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
+    private static int executesHoldingWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (TagHelperConfig.enableSetCommand.get()) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
-            item.setTag(targetNBT);
-            MutableComponent text = new TextComponent("current NBT: ")
-                    .append(targetNBT.toString());
-            source.sendSuccess(text, false);
+            setTagAndNotify(source, item, targetNBT);
         } else
             source.sendFailure(new TextComponent("set command is disabled in config"));
         return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesSlotWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get()) {
+            int slotId = IntegerArgumentType.getInteger(context, "slot");
+            ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
+            if (item == null) return Command.SINGLE_SUCCESS;
+            setTagAndNotify(source, item, tag, value);
+        } else
+            source.sendFailure(new TextComponent("set command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static int executesSlotWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
+            throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (TagHelperConfig.enableSetCommand.get()) {
+            int slotId = IntegerArgumentType.getInteger(context, "slot");
+            ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
+            if (item == null) return Command.SINGLE_SUCCESS;
+            setTagAndNotify(source, item, targetNBT);
+        } else
+            source.sendFailure(new TextComponent("set command is disabled in config"));
+        return Command.SINGLE_SUCCESS;
+    }
+    
+    private static void setTagAndNotify(CommandSourceStack source, ItemStack item, String tag, Tag value) {
+        CompoundTag targetNBT = item.getOrCreateTag();
+        targetNBT.put(tag, value);
+        item.setTag(targetNBT);
+        MutableComponent text = new TextComponent("current NBT: ")
+            .append(targetNBT.toString());
+        source.sendSuccess(text, false);
+    }
+    
+    private static void setTagAndNotify(CommandSourceStack source, ItemStack item, CompoundTag targetNBT) {
+        item.setTag(targetNBT);
+        MutableComponent text = new TextComponent("current NBT: ")
+            .append(targetNBT.toString());
+        source.sendSuccess(text, false);
     }
     
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> literal = CommandUtil.literal
+            .then(Commands.literal("holding")
                 .then(Commands.literal("set")
+                    .then(Commands.argument("key", StringArgumentType.string())
+                        .then(Commands.argument("value", NbtTagArgument.nbtTag())
+                            .executes(context -> executesHoldingWithTag(context,
+                                StringArgumentType.getString(context, "key"),
+                                NbtTagArgument.getNbtTag(context, "value"))
+                            )
+                        )
+                    )
+                    .then(Commands.argument("NBT", CompoundTagArgument.compoundTag())
+                        .executes(context -> executesHoldingWithCompound(context,
+                            CompoundTagArgument.getCompoundTag(context, "NBT"))
+                        )
+                    )
+                )
+            )
+            .then(Commands.literal("slot")
+                .then(Commands.argument("slot", IntegerArgumentType.integer(0, 40))
+                    .then(Commands.literal("set")
                         .then(Commands.argument("key", StringArgumentType.string())
-                                .then(Commands.argument("value", NbtTagArgument.nbtTag())
-                                        .executes(context -> executes(context,
-                                                StringArgumentType.getString(context, "key"),
-                                                NbtTagArgument.getNbtTag(context, "value"))
-                                        )
+                            .then(Commands.argument("value", NbtTagArgument.nbtTag())
+                                .executes(context -> executesSlotWithTag(context,
+                                    StringArgumentType.getString(context, "key"),
+                                    NbtTagArgument.getNbtTag(context, "value"))
                                 )
+                            )
                         )
                         .then(Commands.argument("NBT", CompoundTagArgument.compoundTag())
-                                .executes(context -> executes(context,
-                                        CompoundTagArgument.getCompoundTag(context, "NBT"))
-                                )
+                            .executes(context -> executesSlotWithCompound(context,
+                                CompoundTagArgument.getCompoundTag(context, "NBT"))
+                            )
                         )
-                );
+                    )
+                )
+            );
         LiteralCommandNode<CommandSourceStack> cmd = dispatcher.register(literal);
         dispatcher.register(CommandUtil.alias.redirect(cmd));
     }
