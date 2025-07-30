@@ -16,8 +16,9 @@ plugins {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-def baseVersion = '1.0.0'
+def baseVersion = '1.0.2'
 def minecraftVersion = '1.19.4'
+def forgeVersion = '45.4.0'
 version = "${minecraftVersion}-${baseVersion}" as Object
 group = 'io.github.samarium150'
 archivesBaseName = 'taghelper'
@@ -72,7 +73,7 @@ minecraft {
 // sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.1.0'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.4.0'
 }
 
 tasks.withType(JavaCompile) {
@@ -97,8 +98,8 @@ jar.finalizedBy('reobfJar')
 changelog {
     appName "${project.name}"
     versionNum "${project.version}"
-    repoUrl "https://github.com/Samarium150/TagHelper"
-    trackerUrl "https://github.com/Samarium150/TagHelper/issues"
+    repoUrl "https://github.com/Rustypredator/TagHelper"
+    trackerUrl "https://github.com/Rustypredator/TagHelper/issues"
 }
 
 javadoc {
