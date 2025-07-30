@@ -16,7 +16,7 @@ plugins {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-def baseVersion = '1.0.1'
+def baseVersion = '1.0.2'
 def minecraftVersion = '1.20.1'
 def forgeVersion = '47.4.0'
 version = "${minecraftVersion}-${baseVersion}" as Object
@@ -98,8 +98,8 @@ jar.finalizedBy('reobfJar')
 changelog {
     appName "${project.name}"
     versionNum "${project.version}"
-    repoUrl "https://github.com/Samarium150/TagHelper"
-    trackerUrl "https://github.com/Samarium150/TagHelper/issues"
+    repoUrl "https://github.com/Rustypredator/TagHelper"
+    trackerUrl "https://github.com/Rustypredator/TagHelper/issues"
 }
 
 javadoc {
