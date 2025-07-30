@@ -9,6 +9,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.samarium150.minecraft.mod.taghelper.config.TagHelperConfig;
+import io.github.samarium150.minecraft.mod.taghelper.permission.PermissionManager;
 import io.github.samarium150.minecraft.mod.taghelper.util.CommandUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -30,57 +31,57 @@ public final class Set {
     private static int executesHoldingWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "set")) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, tag, value);
         } else
-            source.sendFailure(Component.literal("set command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHoldingWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "set")) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, targetNBT);
         } else
-            source.sendFailure(Component.literal("set command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesSlotWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "set")) {
             int slotId = IntegerArgumentType.getInteger(context, "slot");
             ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, tag, value);
         } else
-            source.sendFailure(Component.literal("set command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesSlotWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "set")) {
             int slotId = IntegerArgumentType.getInteger(context, "slot");
             ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
             if (item == null) return Command.SINGLE_SUCCESS;
             setTagAndNotify(source, item, targetNBT);
         } else
-            source.sendFailure(Component.literal("set command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHotbarWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableHotbarCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processHotbarItems(source, item -> {
@@ -95,14 +96,14 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in hotbar"));
         } else
-            source.sendFailure(Component.literal("set hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHotbarWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableHotbarCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processHotbarItems(source, item -> {
@@ -117,14 +118,14 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in hotbar"));
         } else
-            source.sendFailure(Component.literal("set hotbar command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesInventoryWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableInventoryCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processInventoryItems(source, item -> {
@@ -139,14 +140,14 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in inventory"));
         } else
-            source.sendFailure(Component.literal("set inventory command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesInventoryWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableInventoryCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processInventoryItems(source, item -> {
@@ -161,14 +162,14 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in inventory"));
         } else
-            source.sendFailure(Component.literal("set inventory command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesEChestWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag, Tag value)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableEnderChestCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processEnderChestItems(source, item -> {
@@ -183,14 +184,14 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set tag '" + tag + "' on " + count + " items in ender chest"));
         } else
-            source.sendFailure(Component.literal("set ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesEChestWithCompound(@Nonnull CommandContext<CommandSourceStack> context, CompoundTag targetNBT)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableSetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+        if (PermissionManager.hasPermission(source, "set") && TagHelperConfig.enableEnderChestCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processEnderChestItems(source, item -> {
@@ -205,7 +206,7 @@ public final class Set {
             
             source.sendSystemMessage(Component.literal("Set NBT on " + count + " items in ender chest"));
         } else
-            source.sendFailure(Component.literal("set ender chest command is disabled in config"));
+            source.sendFailure(Component.literal("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
