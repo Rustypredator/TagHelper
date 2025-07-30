@@ -208,7 +208,20 @@ public final class Remove {
     private static void removeTagAndNotify(CommandSourceStack source, ItemStack item, String tag) {
         CompoundTag targetNBT = item.getTag();
         if (targetNBT == null) return;
-        targetNBT.remove(tag);
+        // Check if tag has semicolons in it. if so, split the string along those and convert it to a list.
+        if (tag.contains(".")) {
+            String[] tags = tag.split(".");
+            for (String t : tags) {
+                if (targetNBT.contains(t)) {
+                    targetNBT.remove(t);
+                } else {
+                    source.sendFailure(Component.literal("Tag '" + t + "' does not exist in item NBT"));
+                }
+            }
+        } else if (!targetNBT.contains(tag)) {
+            source.sendFailure(Component.literal("Tag '" + tag + "' does not exist in item NBT"));
+            return;
+        }
         item.setTag(targetNBT);
         MutableComponent text = Component.literal("current NBT: ")
             .append(targetNBT.toString());
@@ -231,7 +244,17 @@ public final class Remove {
         if (targetNBT == null) return false;
         if (!targetNBT.contains(tag)) return false;
         
-        targetNBT.remove(tag);
+        // Check if tag has semicolons in it. if so, split the string along those and convert it to a list.
+        if (tag.contains(".")) {
+            String[] tags = tag.split(".");
+            for (String t : tags) {
+                if (targetNBT.contains(t)) {
+                    targetNBT.remove(t);
+                }
+            }
+        } else if (!targetNBT.contains(tag)) {
+            return false;
+        }
         item.setTag(targetNBT);
         return true;
     }
