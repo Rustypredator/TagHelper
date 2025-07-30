@@ -9,6 +9,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.samarium150.minecraft.mod.taghelper.config.TagHelperConfig;
+import io.github.samarium150.minecraft.mod.taghelper.permission.PermissionManager;
 import io.github.samarium150.minecraft.mod.taghelper.util.CommandUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,55 +28,55 @@ public final class Remove {
     private static int executesHoldingWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get()) {
+        if (PermissionManager.hasPermission(source, "remove")) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
             removeTagAndNotify(source, item, tag);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHolding(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get()) {
+        if (PermissionManager.hasPermission(source, "remove")) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
             removeAllTagsAndNotify(source, item);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesSlotWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get()) {
+        if (PermissionManager.hasPermission(source, "remove")) {
             int slotId = IntegerArgumentType.getInteger(context, "slot");
             ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
             if (item == null) return Command.SINGLE_SUCCESS;
             removeTagAndNotify(source, item, tag);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesSlot(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get()) {
+        if (PermissionManager.hasPermission(source, "remove")) {
             int slotId = IntegerArgumentType.getInteger(context, "slot");
             ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
             if (item == null) return Command.SINGLE_SUCCESS;
             removeAllTagsAndNotify(source, item);
         } else
-            source.sendFailure(new TextComponent("remove command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHotbarWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableHotbarCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processHotbarItems(source, item -> {
@@ -91,13 +92,13 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHotbar(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableHotbarCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processHotbarItems(source, item -> {
@@ -112,14 +113,14 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in hotbar"), false);
         } else
-            source.sendFailure(new TextComponent("remove hotbar command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesInventoryWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableInventoryCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processInventoryItems(source, item -> {
@@ -135,13 +136,13 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesInventory(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableInventoryCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processInventoryItems(source, item -> {
@@ -156,14 +157,14 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in inventory"), false);
         } else
-            source.sendFailure(new TextComponent("remove inventory command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesEChestWithTag(@Nonnull CommandContext<CommandSourceStack> context, String tag)
             throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableEnderChestCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processEnderChestItems(source, item -> {
@@ -179,13 +180,13 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed tag '" + tag + "' from " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesEChest(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableRemoveCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+        if (PermissionManager.hasPermission(source, "remove") && TagHelperConfig.enableEnderChestCommands.get()) {
             AtomicInteger count = new AtomicInteger(0);
             
             int processed = CommandUtil.processEnderChestItems(source, item -> {
@@ -200,14 +201,27 @@ public final class Remove {
             
             source.sendSuccess(new TextComponent("Removed all NBT from " + count + " items in ender chest"), false);
         } else
-            source.sendFailure(new TextComponent("remove ender chest command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static void removeTagAndNotify(CommandSourceStack source, ItemStack item, String tag) {
         CompoundTag targetNBT = item.getTag();
         if (targetNBT == null) return;
-        targetNBT.remove(tag);
+        // Check if tag has semicolons in it. if so, split the string along those and convert it to a list.
+        if (tag.contains(".")) {
+            String[] tags = tag.split(".");
+            for (String t : tags) {
+                if (targetNBT.contains(t)) {
+                    targetNBT.remove(t);
+                } else {
+                    source.sendFailure(new TextComponent("Tag '" + t + "' does not exist in item NBT"));
+                }
+            }
+        } else if (!targetNBT.contains(tag)) {
+            source.sendFailure(new TextComponent("Tag '" + tag + "' does not exist in item NBT"));
+            return;
+        }
         item.setTag(targetNBT);
         MutableComponent text = new TextComponent("current NBT: ")
             .append(targetNBT.toString());
@@ -230,7 +244,17 @@ public final class Remove {
         if (targetNBT == null) return false;
         if (!targetNBT.contains(tag)) return false;
         
-        targetNBT.remove(tag);
+        // Check if tag has semicolons in it. if so, split the string along those and convert it to a list.
+        if (tag.contains(".")) {
+            String[] tags = tag.split(".");
+            for (String t : tags) {
+                if (targetNBT.contains(t)) {
+                    targetNBT.remove(t);
+                }
+            }
+        } else if (!targetNBT.contains(tag)) {
+            return false;
+        }
         item.setTag(targetNBT);
         return true;
     }

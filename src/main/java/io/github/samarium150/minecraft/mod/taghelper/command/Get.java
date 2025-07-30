@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.samarium150.minecraft.mod.taghelper.config.TagHelperConfig;
+import io.github.samarium150.minecraft.mod.taghelper.permission.PermissionManager;
 import io.github.samarium150.minecraft.mod.taghelper.util.CommandUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -26,30 +27,30 @@ public final class Get {
     
     private static int executesHolding(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableGetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "get")) {
             ItemStack item = CommandUtil.getMainHandItem(source);
             if (item == null) return Command.SINGLE_SUCCESS;
             displayNBT(source, item);
         } else
-            source.sendFailure(new TextComponent("get command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesSlot(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableGetCommand.get()) {
+        if (PermissionManager.hasPermission(source, "get")) {
             int slotId = IntegerArgumentType.getInteger(context, "slot");
             ItemStack item = CommandUtil.getItemFromSlot(source, slotId);
             if (item == null) return Command.SINGLE_SUCCESS;
             displayNBT(source, item);
         } else
-            source.sendFailure(new TextComponent("get command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesHotbar(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableHotbarCommands.get()) {
+        if (PermissionManager.hasPermission(source, "get") && TagHelperConfig.enableHotbarCommands.get()) {
             List<ItemStack> processedItems = new ArrayList<>();
             int count = CommandUtil.processHotbarItems(source, item -> processedItems.add(item));
             
@@ -65,13 +66,13 @@ public final class Get {
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get hotbar command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesInventory(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableInventoryCommands.get()) {
+        if (PermissionManager.hasPermission(source, "get") && TagHelperConfig.enableInventoryCommands.get()) {
             List<ItemStack> processedItems = new ArrayList<>();
             int count = CommandUtil.processInventoryItems(source, item -> processedItems.add(item));
             
@@ -87,13 +88,13 @@ public final class Get {
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get inventory command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
     private static int executesEChest(@Nonnull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        if (TagHelperConfig.enableGetCommand.get() && TagHelperConfig.enableEnderChestCommands.get()) {
+        if (PermissionManager.hasPermission(source, "get") && TagHelperConfig.enableEnderChestCommands.get()) {
             List<ItemStack> processedItems = new ArrayList<>();
             int count = CommandUtil.processEnderChestItems(source, item -> processedItems.add(item));
             
@@ -109,7 +110,7 @@ public final class Get {
                 displayNBT(source, item, text);
             }
         } else
-            source.sendFailure(new TextComponent("get ender chest command is disabled in config"));
+            source.sendFailure(new TextComponent("You don't have permission to use this command"));
         return Command.SINGLE_SUCCESS;
     }
     
